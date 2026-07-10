@@ -1,0 +1,4 @@
+interface:
+  display_name: "Close Thread"
+  short_description: "Safely clean up, preserve work, and archive"
+  default_prompt: "Use $close-thread to clean up this task, preserve any workspace changes, and archive it through the current ChatGPT Work or Codex surface when safe."
