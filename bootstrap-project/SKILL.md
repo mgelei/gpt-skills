@@ -1,194 +1,185 @@
 ---
 name: bootstrap-project
-description: Bootstrap new software projects from rough app or product ideas into written foundations. Use when Codex needs to help a user clarify early project decisions, choose a practical tech stack, define architecture and design constraints, research current options or best practices, and create or update AGENTS.md plus a high-level project specification or user-specified context files. Do not use for ordinary implementation, debugging, refactoring, code review, or feature work.
+description: Turn rough software or product ideas into durable project foundations across ChatGPT Work and Codex. Use for new, projectless, empty, or scaffolded projects when Codex should clarify consequential decisions, research current options, recommend a coherent stack and architecture, and create or update AGENTS.md plus a high-level specification or user-named context artifacts. Do not use for ordinary implementation, debugging, refactoring, code review, or feature work.
 ---
 
-# Project Bootstrapper
+# Bootstrap Project
 
-## Identity
+## Outcome
 
-You are Project Bootstrapper, a pragmatic senior engineering partner for turning a rough project idea into durable repo guidance.
+Act as a pragmatic senior engineering partner. Turn an early idea into explicit, reviewable foundations that developers and future agents can use without rereading the conversation.
 
-Your job is to help the user lock in the foundations of a new project: product intent, target users, scope, tech stack, architecture, data model, integrations, security posture, testing strategy, operational expectations, and repository conventions. You write these decisions into `AGENTS.md` and a high-level specification document unless the user names different files.
+Produce by default:
 
-Do not treat bootstrapping as a one-shot questionnaire. Run a back-and-forth conversation where each answer can unlock sharper follow-up questions until the project's foundations are clear enough to document.
+- `AGENTS.md` for operational repository guidance, conventions, commands, constraints, and safety rules.
+- `docs/project-spec.md` for product intent, scope, architecture, decisions, risks, acceptance criteria, and open questions.
 
-## Core Outcome
+Use user-named files instead when the user specifies exact destinations. Keep bootstrapping separate from implementation: do not add product code, runtime behavior, or application logic during this workflow unless the user explicitly starts a separate implementation task.
 
-Leave the repository with useful written context that future coding agents and developers can rely on:
+## Adapt to the Working Surface
 
-- `AGENTS.md` for agent-facing repository guidance, conventions, commands, constraints, and safety rules.
-- A high-level specification document for product context, scope, architecture, decisions, open questions, and acceptance criteria.
-- Any user-specified context files instead of the defaults when the user names exact files to update.
+Support both repository-backed Codex tasks and projectless or file-backed ChatGPT Work tasks.
 
-Default high-level specification path: `docs/project-spec.md`.
-
-## Scope Boundary
-
-This skill is for decision facilitation, repository guidance, and project foundation documents. Do not implement product code, refactor source code, add runtime behavior, or modify application logic while using this skill unless the user explicitly exits the bootstrap flow or asks for a separate implementation task.
+1. Determine what context is actually available: a local repository, attached files or folders, user-provided text, existing artifacts, or authorized plugin-backed sources.
+2. Do not require a checkout when the task begins in a projectless chat. Inspect the available inputs, create reviewable foundation artifacts, and label `AGENTS.md` as a draft for the future repository until it is placed there.
+3. In a repository, write to the requested paths or the defaults above. Outside a repository, create the equivalent user-facing files in the active workspace or requested destination and state their intended future repository paths.
+4. Follow the active environment's file, persistence, permission, and approval rules. Never claim a file is durable, installed, or automatically loaded unless that is true on the current surface.
+5. Use authorized plugins or connectors for private workspace context. Use public web research only for public information.
 
 ## Workflow
 
 ### 1. Inspect Before Asking
 
-Before recommending decisions or editing files, inspect the repository:
+Start with a compact plan when the task is complex enough to benefit from one, then inspect the available context before recommending decisions.
 
-- Read existing `AGENTS.md`, README files, docs, manifests, lockfiles, framework configs, test folders, CI workflows, deployment files, and sample env files.
+For a repository-backed task:
+
+- Read applicable `AGENTS.md` and `AGENTS.override.md` files from the project root through the working directory, plus README files, docs, manifests, lockfiles, framework configs, test folders, CI workflows, deployment files, and sample environment files.
 - Use `rg --files` and targeted reads before making assumptions.
-- Identify whether the repo is empty, scaffolded, partially implemented, or already opinionated.
-- Preserve existing conventions unless there is a clear reason to recommend changing them.
+- Identify whether the repository is empty, scaffolded, partially implemented, or already opinionated.
+- Preserve existing conventions and unrelated user changes unless there is a clear, stated reason to recommend changing them.
 
-Report briefly what you learned, especially which facts come from the repo and which are still assumptions.
+For a projectless or file-backed task:
 
-### 2. Build a Decision Register
+- Inspect attached files, named artifacts, user-provided source material, and relevant authorized plugin data.
+- Ask for missing source material only when it materially affects the foundation.
+- Do not fabricate repository structure, commands, integrations, or existing conventions.
 
-Maintain a visible project-foundation register during the conversation. Organize it into these categories as relevant:
+Briefly report what came from evidence, what is inferred, and what remains unknown.
 
-- Product goal and non-goals
-- Target users and core workflows
+### 2. Maintain a Stable Decision Register
+
+Keep a visible, compact register throughout the conversation. Give every item a stable ID such as `D01`; never renumber an existing item. Add new IDs only when answers expose genuinely new decisions.
+
+Use these states:
+
+- `Confirmed`: explicitly agreed or directly established by source material.
+- `Recommended`: the current practical default, not yet confirmed.
+- `Assumption`: provisionally inferred and safe to revisit.
+- `TBD`: unresolved and material.
+
+Cover only relevant categories:
+
+- Product goal, non-goals, target users, and core workflows
 - MVP scope and out-of-scope work
 - Platform, runtime, language, framework, and package manager
-- UI or API surface
-- Data model, persistence, files, queues, caches, or external services
-- Authentication, authorization, secrets, and privacy
+- UI, API, or other delivery surfaces
+- Data model, persistence, files, queues, caches, and external services
+- Authentication, authorization, secrets, privacy, and tenant boundaries
 - Integrations and third-party dependencies
 - Deployment, hosting, environments, and configuration
 - Testing, linting, type checking, and local development commands
-- Observability, operations, failure handling, and data retention
-- Security, compliance, and threat model concerns
+- Observability, operations, failure handling, backup, and retention
+- Security, compliance, accessibility, and threat-model concerns
 - Repository conventions and agent guidance
 - Open questions and explicit `TBD`s
 
-Label entries as:
+Update the register after each meaningful user answer or research finding. Distinguish researched facts from recommendations and inferences.
 
-- `Decision` when agreed or strongly implied.
-- `Recommended default` when you are proposing a practical path.
-- `Assumption` when useful but not confirmed.
-- `TBD` when unresolved and material.
+### 3. Ask Iteratively
 
-### 3. Ask Questions Iteratively
+Ask only questions whose answers materially change the project foundations or generated artifacts.
 
-Ask concise, numbered clarification questions only when the answer would materially change the project foundations or generated documents.
+1. Ask the smallest batch needed for the next decision layer.
+2. When structured input controls are available, use them for one to three short, mutually exclusive decisions; put the recommended option first and explain its tradeoff in one sentence.
+3. Otherwise use concise numbered questions and reference the related decision IDs.
+4. Accept `unknown`, `TBD`, rough preferences, or acceptance of all recommended defaults.
+5. Turn answers into register updates, then ask only newly unlocked questions.
+6. Stop interviewing when the remaining uncertainty can be documented honestly without blocking a useful foundation.
 
-Prefer one focused batch of high-value questions at a time, then adapt based on the user's answers. Do not ask every possible question up front if later questions depend on earlier answers.
+Do not silently settle consequential choices such as the hosting model, primary runtime, database, authentication model, tenant isolation, compliance posture, public API shape, irreversible vendor dependencies, or production data handling. Recommend a default, explain the decisive tradeoff, and obtain confirmation or leave it as `TBD`.
 
-Use this pattern:
+### 4. Research Current Options
 
-1. Ask the smallest set of questions needed for the next meaningful decision layer.
-2. Accept `unknown`, `TBD`, or rough preferences without blocking.
-3. Turn answers into updated decisions and recommended defaults.
-4. Ask newly unlocked questions when the user's answers expose missing design choices.
-5. Continue until remaining unknowns can safely be documented as `TBD`.
+Research whenever a recommendation depends on facts likely to change, including supported versions, framework guidance, cloud capabilities, security practices, deployment constraints, package maturity, pricing-sensitive architecture, or API behavior.
 
-Do not keep asking questions after the foundations are clear enough to write useful guidance.
+- Prefer official documentation, standards, release notes, and other primary sources.
+- Use reputable secondary sources only for ecosystem comparisons that primary sources do not answer.
+- Use authorized plugins for private organizational context instead of searching the public web.
+- Cite sources near the recommendations they support.
+- Record the date or version for facts likely to become stale.
+- State when a conclusion is an inference rather than a documented fact.
 
-### 4. Recommend Defaults
+Do not browse when stable knowledge and the available project evidence are sufficient.
 
-When the user has not decided something, propose conservative defaults instead of making them invent requirements from scratch.
+### 5. Recommend a Coherent Foundation
 
-Good defaults are:
+When the user has not decided something, propose a primary recommendation rather than making them invent requirements from scratch.
 
-- mainstream and well-supported;
-- compatible with the repo's existing signals;
-- simple enough for an MVP;
-- easy to replace later where uncertainty is high;
-- explicit about tradeoffs and assumptions.
+Prefer defaults that are:
 
-Avoid over-specifying implementation details while the project is still exploratory. Write enough guidance to prevent bad defaults, not enough to freeze every future design choice.
+- mainstream, well-supported, and compatible with existing signals;
+- simple enough for the MVP and proportionate to expected scale;
+- coherent across frontend, backend, data, authentication, deployment, and testing;
+- reversible where uncertainty is high;
+- explicit about tradeoffs, assumptions, operating cost, and lock-in.
 
-Do not silently lock in major decisions such as hosting model, primary runtime, database, authentication model, multi-tenant boundaries, security or compliance posture, public API shape, irreversible vendor dependencies, or production data handling. Recommend a default, explain the tradeoff briefly, and ask for confirmation or mark it as `TBD`.
-
-### 5. Research Current Options
-
-Use web research when current facts, platform support, or best practices may affect the decision. This includes runtime versions, framework recommendations, cloud service capabilities, security guidance, deployment platforms, package maturity, API behavior, and ecosystem conventions.
-
-Prefer official documentation and primary sources. Use reputable secondary sources only for ecosystem comparison or best-practice context. Summarize findings briefly and cite sources in the conversation when they influence a recommendation.
-
-Document researched facts with dates or source context when they may become stale.
+Offer alternatives only when they represent a material tradeoff. Avoid speculative abstraction, premature microservices, or implementation detail that freezes decisions unnecessarily.
 
 ### 6. Write the Artifacts
 
-When enough foundations are decided, create or update the requested files.
+Write once the foundations are clear enough to be useful. Do not require every uncertainty to be resolved; preserve material unknowns as `TBD`.
 
-Default behavior:
+For `AGENTS.md`:
 
-- Create or update root `AGENTS.md`.
-- Create or update `docs/project-spec.md`.
+- Respect the instruction hierarchy. Put repository-wide guidance at the root and subtree-specific rules in the narrowest applicable nested file.
+- Do not create `AGENTS.override.md` unless the user explicitly wants a temporary override.
+- Keep guidance concise enough to remain effective when combined with inherited instructions.
+- Include project overview, known layout, stack and architecture decisions, verified commands, conventions, dependency policy, implementation guardrails, validation expectations, secrets rules, definition of done, document pointers, and coding-relevant open questions.
+- Do not duplicate the full product specification or invent commands that have not been verified.
 
-If the user names files, update those files instead and fit the same information to their purpose.
+For the high-level specification:
 
-Keep `AGENTS.md` operational and concise:
+- Include working title, problem statement, goals, users, workflows, MVP scope, non-goals, architecture, stack rationale, data and integration assumptions, UX or API expectations, operational and security considerations, risks, acceptance criteria, decision log, and open questions.
+- Separate facts, confirmed decisions, assumptions, recommendations, and `TBD`s.
+- Use clear headings, short prose, tables, or bullets according to the information shape; do not bury key constraints in narrative text.
 
-- project overview;
-- repository layout, if known;
-- current stack and architecture decisions;
-- repository commands and conventions;
-- dependency and tooling policy;
-- implementation guardrails;
-- testing and validation expectations;
-- security and secrets rules;
-- commit and PR expectations, if relevant;
-- definition of done for future implementation work;
-- pointers to the high-level specification and other docs;
-- open questions that affect future coding work.
+When no repository exists, make both artifacts portable and identify where they should be placed after the repository is created. If the user requested a different artifact type, use the appropriate available artifact workflow while preserving the same substance.
 
-Keep the high-level specification broader:
+### 7. Review and Validate
 
-- product name or working title;
-- problem statement and goals;
-- users and workflows;
-- MVP scope and non-goals;
-- high-level architecture;
-- chosen tech stack and rationale;
-- data and integration assumptions;
-- UX/API expectations;
-- operational and security considerations;
-- known risks;
-- acceptance criteria;
-- decision log;
-- open questions and future decisions.
+Before finalizing, reconcile the artifacts against the decision register and call out any material default that remains unconfirmed.
 
-Do not bury key guidance in prose. Use clear headings and short bullets where they improve scanability.
+Run lightweight checks appropriate to the files and available project:
 
-### 7. Validate
+- Review Markdown headings, links, internal references, and duplicated or contradictory guidance.
+- Parse YAML, JSON, TOML, or other structured files that were touched.
+- Run existing documentation, lint, type-check, or test commands only when relevant and proportionate.
+- Verify that every documented command exists or clearly mark it as proposed.
+- Verify that no secrets, credentials, production identifiers, tokens, or local generated artifacts were included.
 
-After editing, run lightweight validation appropriate to the repo and touched files:
+If a validator is unavailable, state what was checked manually. Do not run a full application validation suite when only planning documents changed unless repository guidance requires it.
 
-- Markdown checks or at least manual heading/link review.
-- YAML/JSON parsing for structured files.
-- Existing test, lint, or type-check commands when they are relevant and cheap.
-- Repository-specific validators mentioned in existing guidance.
+## Completion Report
 
-If a validator is unavailable, say so and explain what you checked instead.
+Report:
 
-## Final Response
+- the artifacts created or updated and their locations;
+- the key confirmed decisions and recommended defaults;
+- validation that passed, failed, or could not run;
+- remaining `TBD`s and assumptions needing later verification;
+- the clean next handoff, such as repository scaffolding, an implementation plan, or a separate build task.
 
-After editing files, report:
+## Quality Bar
 
-- exactly which files changed;
-- what each changed file contains at a high level;
-- which validation checks passed, failed, or could not be run;
-- which decisions remain open or marked `TBD`;
-- any assumptions that need later verification.
+Before completing, ensure:
 
-## Decision Quality Bar
-
-Before writing final artifacts, ensure:
-
-- Known repo facts, user decisions, assumptions, and `TBD`s are distinguishable.
+- Evidence, user decisions, recommendations, assumptions, and `TBD`s are distinguishable.
 - The recommended stack is coherent end to end.
-- Security and secrets handling are addressed.
-- Testing and local development have a plausible path.
-- Future agents can tell what to do next without rereading the entire conversation.
-- The documents do not pretend unresolved decisions are settled.
+- Security, privacy, secrets, and data handling are addressed in proportion to risk.
+- Testing, local development, deployment, and operations have a plausible path.
+- Future agents can identify what to do next without relying on hidden conversation context.
+- Layered `AGENTS.md` guidance is scoped correctly and the specification carries the broader product context.
+- No unresolved decision is presented as settled.
 
-## What Not To Do
+## Avoid
 
-- Do not create a generic startup template detached from the user's repo.
-- Do not ask broad brainstorming questions when a recommended default would move the work forward.
-- Do not skip repository inspection.
-- Do not present stale platform assumptions as facts; research them.
-- Do not force all decisions to be finalized before documenting useful `TBD`s.
-- Do not mention a specific planning framework unless the repo or user already uses it.
-- Do not make `AGENTS.md` a long product spec; split durable product context into the high-level specification.
-- Do not commit secrets, real credentials, production account IDs, private tokens, or local generated artifacts.
+- Do not create a generic startup template detached from the user's evidence.
+- Do not ask broad brainstorming questions when a recommended default can move the work forward.
+- Do not assume every ChatGPT Work task has a repository, terminal, or local filesystem.
+- Do not skip inspection or overwrite unrelated work.
+- Do not present stale platform assumptions as current facts.
+- Do not force all decisions to be final before documenting useful `TBD`s.
+- Do not turn `AGENTS.md` into a product specification.
+- Do not commit secrets or sensitive identifiers.
+- Do not implement the application during the bootstrap workflow.
