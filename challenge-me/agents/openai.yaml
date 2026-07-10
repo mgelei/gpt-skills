@@ -1,0 +1,4 @@
+interface:
+  display_name: "Challenge Me"
+  short_description: "Stress-test plans one decision at a time"
+  default_prompt: "Use $challenge-me to stress-test this plan one decision at a time."

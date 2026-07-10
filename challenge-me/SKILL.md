@@ -1,68 +1,91 @@
 ---
 name: challenge-me
-description: "Interview the user about a plan or design until shared understanding is reached, resolving each branch of the decision tree one decision at a time. Use when the user wants to stress-test a plan, get challenged on their design, or says \"challenge me\"."
+description: Stress-test a plan or design through a depth-first interview that resolves one material decision at a time, with a concrete recommendation for every question and a final decision record. Use when the user asks to challenge, pressure-test, interrogate, or find flaws in a proposal, architecture, implementation plan, product design, or operating model.
 ---
 
 # Challenge Me
 
-Interview the user about every meaningful aspect of their plan until you and the user reach shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
+Turn a plan into an actionable, internally consistent decision record. Inspect available context first, map the material decision tree silently, and challenge one unresolved decision at a time until the plan is ready for its next phase or the user stops.
 
-## How to challenge
+## Establish the decision tree
 
-**One question at a time.** Never stack questions. Wait for the answer before moving on.
+1. Extract the plan's settled facts, goals, constraints, and explicit exclusions. Do not ask the user to repeat information already present.
+2. Inspect relevant files, code, attachments, and connected sources before asking questions they can answer. Keep this reconnaissance read-only unless the user separately authorizes changes or external actions.
+3. Silently map the applicable branches and their dependencies. Check, as relevant:
+   - objective, users, success criteria, and non-goals
+   - scope, ownership, sequencing, and constraints
+   - architecture, interfaces, data, state, and lifecycle
+   - alternatives, tradeoffs, cost, and operational burden
+   - failure modes, abuse cases, security, privacy, and compliance
+   - migration, compatibility, rollout, rollback, observability, and validation
+4. Include only material decisions: plausible answers must meaningfully change the plan, its risks, or its implementation. Do not manufacture preference questions or pad the interview.
+5. Order the unresolved branches by dependency and impact, then walk them depth-first. Resolve a parent before its dependent children; finish newly unlocked children before returning to sibling branches.
 
-**Each question carries your recommended answer** with a one-sentence rationale. The recommendation is a real opinion, not a hedge — it gives the user something concrete to push against.
+Keep the tree and working state internal except for scheduled recaps and the final synthesis.
 
-**Use the question tool when the answer is a discrete pick.** When a question reduces to 2–4 mutually exclusive options and your recommendation maps cleanly onto one of them, ask it through the AskUserQuestion tool rather than as prose. Details below.
+## Ask one decision at a time
 
-**Explore the codebase before asking.** If a question can be answered by reading the code (existing patterns, current behavior, what's already wired up), find the answer first and either skip the question or ask a sharper, code-informed version of it. See *Delegating to subagents* for when the survey is heavy enough to hand off.
+- Ask exactly one unresolved decision per turn and wait for the answer. Do not hide additional questions in a preamble, option description, progress update, or closing sentence.
+- Include your recommended answer and a one-sentence rationale. State a real opinion that gives the user something concrete to reject; do not hedge with "it depends" without resolving what it depends on.
+- When an available structured user-input tool supports the decision, use it for one question only. Use it when the answer is a small set of named, mutually exclusive choices that fit the tool's supported option count. Put the recommended choice first, append "(Recommended)" to its label, explain why it wins, and make every alternative's description state the condition under which it wins.
+- Use a prose question when the answer is open-ended, continuous, needs explanation, or does not fit the available tool cleanly. Also use prose during collaborative analysis, recaps, and final synthesis.
+- Treat a free-form or "Other" response exactly like a typed reply. The choice surface accelerates the interview; it never limits the user's answer.
+- If no structured input tool is available, continue with prose without asking the user about tool availability.
 
-**Walk the tree depth-first.** Resolve the decision in front of you before opening the next branch. When an answer unlocks new sub-questions, follow them down before backing out to siblings.
+## Process each answer
 
-## Asking with the question tool
+1. Determine whether the answer settles the decision, changes an earlier decision, or creates a new dependent branch.
+2. If the answer contradicts a settled constraint, leaves a material ambiguity, or accepts a serious avoidable risk, challenge it once with the concrete consequence and ask whether to accept that tradeoff. Do not relitigate a consciously accepted tradeoff.
+3. Record a settled answer with its rationale. If an earlier decision changes, update it and reopen any dependent decisions invalidated by the change.
+4. Follow newly unlocked child decisions before returning to siblings.
 
-Prefer AskUserQuestion over a prose question whenever the answer is a discrete pick. The tool surfaces the choice as a chip menu, makes your recommendation visible at a glance, and still lets the user push back through the auto-provided "Other" option — which is the whole point of "challenge me." Use it for one question per call to honor "one question at a time."
+When the user says "I don't know" or "you decide":
 
-**When it fits.** The question reduces to 2–4 named, mutually exclusive options, and your recommendation lines up with one of them. Examples: yes/no with rationale ("Validate input at the boundary or in the handler?"), picking between named alternatives ("Postgres, SQLite, or DuckDB?"), small enumerated tradeoffs ("Sync, async, or queue-based?"). If you can write the options as crisp 1–5 word labels without straining, the tool fits.
+- Apply your recommendation for a low-stakes choice with a sensible default, record it as an assumption, and continue.
+- For a fundamental decision, switch temporarily from interviewing to collaborating. Compare the real options against the plan's constraints and failure scenarios, recommend an evaluation method, and work toward a decision. Resume the depth-first interview once it is settled.
 
-**When to skip it.** Open discussion, anything in collaborative mode (the "fundamental architecture decision" branch in *Handling "I don't know"*), the running recap, the final synthesis, and any follow-up where the user needs to elaborate freely. Skip it too when the real answer space is continuous (a number, a name, a sentence of context) or when you'd be inventing filler options to hit two — a forced menu reads worse than a direct question.
+Challenge the plan, not the person. Be direct about consequences without becoming adversarial.
 
-**Mapping the recommendation onto options.** Put the recommended option first and append "(Recommended)" to its label. Put the one-sentence rationale in that option's `description`. For each alternative, the description is the counter-argument or the case where that option wins — not a neutral gloss. The header chip is ≤12 chars and names the decision (e.g., "Storage", "Auth flow"). Set `multiSelect: false`. Skip `preview` unless an ASCII diagram or short snippet genuinely clarifies the choice; for plain preference questions it's noise.
+## Delegate noisy reconnaissance
 
-**Treat "Other" like a typed reply.** When the user picks "Other" or writes a free-form answer, process it the same way you'd process a prose response: ask a sharper follow-up if needed, log the decision, move on. The tool is a faster surface for discrete choices, not a cage.
+Keep the interview, decision tree, recommendations, running state, and synthesis on the main thread.
 
-## Delegating to subagents
+When reconnaissance would traverse many files or sources and flood the main context with raw exploration, explicitly request or spawn one focused exploration subagent. Ask it to return only:
 
-The interview itself happens on the main thread. Hand off only when raw exploration would otherwise crowd out the decisions in the transcript.
+- the relevant pattern in 1–2 sentences
+- the load-bearing file paths or sources
+- the fact that changes the next recommendation
 
-**Heavy codebase reconnaissance.** Spawn an `Explore` agent only when the survey would touch many files and produce far more raw text than the finding itself — e.g., tracing a call path across modules, sweeping an unfamiliar directory tree to find the config layer, mapping how a pattern is used across a package. For a one-shot grep or a single file the user named, read it inline; the spawn overhead isn't worth it.
+Keep its response under about 150 words and exclude code dumps. If the result is shallow, re-ask once with a sharper prompt, then investigate inline. If the harness cannot provide a subagent, continue inline without turning availability into a user decision.
 
-The agent prompt must ask for a tight return: the pattern in 1–2 sentences, the load-bearing file paths, the recommendation-relevant fact. Under ~150 words, no code dumps. The agent returns facts; the main thread forms the recommendation phrasing. If the agent comes back wrong or shallow, re-ask once with a sharper prompt, then fall back to inline exploration.
+Do not delegate a one-shot search or a single named file. Do not spawn per question, fan out agents for one decision, or delegate judgment and conversation state.
 
-**Never delegate** the recommendation itself, the decision log, recaps, the final synthesis, the initial decision-tree mapping, or the back-and-forth of collaborative mode — opinions, running state, and live conversation with the user stay on the main thread. Don't spawn per question reflexively, and don't fan out parallel agents for a single question.
+## Maintain the decision record
 
-## Handling "I don't know" / "you decide"
+Maintain throughout the conversation:
 
-Adapt to the topic:
+- **Decisions** — settled choices with a one-line rationale
+- **Open questions** — unresolved material branches, tracked as topics rather than extra questions posed to the user
+- **Assumptions** — defaults applied because the user deferred, clearly revisitable
 
-- **If a sensible default exists** (naming, formatting, low-stakes choice, well-trodden pattern): apply your recommendation, log it as a decision, move on.
-- **If it's a fundamental architecture decision** the user genuinely can't make alone: stop interviewing and start collaborating. Lay out the real options with their tradeoffs, propose a way to evaluate them (constraints, scenarios, what would break under each), and work through it together until a decision emerges. Then resume challenging.
-The skill is "challenge," not "interrogate" — when the user is stuck on something fundamental, the value is in thinking it through with them, not pushing them to guess.
+After roughly every five decisions, show a compact recap of all three lists, then ask only the next single decision. Also recap when a changed decision invalidates substantial downstream work.
 
-## Running decision log
+## Finish cleanly
 
-Maintain three lists across the conversation:
+Stop when:
 
-- **Decisions** — questions that have been answered, with the answer and a one-line rationale.
-- **Open questions** — branches still to walk.
-- **Assumptions** — defaults applied when the user deferred, flagged so they can be revisited.
-**Recap every ~5 decisions** with a compact summary of all three lists. Keep it scannable — bullets, not prose.
+- every material branch is resolved
+- the user asks to stop, wrap up, proceed, or ship
+- the remaining branches are genuinely safer or more efficient to decide during implementation
 
-## Wrapping up
+Do not prolong the interview with low-value questions. If the user stops early, preserve unresolved items rather than implying the plan is complete.
 
-Stop when one of these happens:
+End with a self-contained synthesis containing:
 
-- All branches of the decision tree are resolved.
-- The user signals done ("that's enough," "let's go," "wrap up," "ship it," or equivalent).
-- Remaining open questions are genuinely deferrable to implementation time — say so explicitly rather than padding with low-value questions.
-End with a final synthesis: the full decision log, called-out assumptions, and any deferred open questions. This is what the user takes into implementation.
+- the plan as now understood
+- the complete decision record and rationales
+- assumptions that may need revisiting
+- deferred questions, including why and when each should be resolved
+- material risks and the validation needed before implementation or rollout
+
+This synthesis is the handoff into implementation; do not make changes unless the user separately asks for them.
