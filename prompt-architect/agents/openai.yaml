@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prompt Architect"
+  short_description: "Turn rough ideas into production-ready prompts"
+  default_prompt: "Use $prompt-architect to turn this rough idea into a production-ready ChatGPT or Codex prompt."
