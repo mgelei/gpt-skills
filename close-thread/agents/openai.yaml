@@ -1,0 +1,4 @@
+interface:
+  display_name: "Close Thread"
+  short_description: "Clean up, merge, and archive thread"
+  default_prompt: "Use $close-thread to clean up resources, fast-forward merge the worktree back to its starting branch when safe, and archive this Codex thread."
