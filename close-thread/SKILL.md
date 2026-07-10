@@ -1,115 +1,105 @@
 ---
 name: close-thread
-description: End-of-thread cleanup workflow for Codex. Use when the user asks to close, finish, shut down, wrap up, or archive a Codex thread, especially after implementation work in a temporary worktree. The skill frees pending resources such as dev servers, verifies git cleanliness, fast-forward merges a clean worktree back to its starting branch when applicable, and archives the thread.
+description: Close a ChatGPT Work or Codex task, chat, thread, or CLI session safely. Use when the user asks to close, finish, wrap up, shut down, or archive the current work. Clean up only resources owned by the task, preserve Git and worktree changes, use the surface's supported handoff or archival path, and avoid losing work when archiving a Codex-managed worktree.
 ---
 
 # Close Thread
 
-Use this skill at the end of a Codex thread to leave the workspace and thread state clean.
+Close the current work safely across ChatGPT Work, Codex in the ChatGPT desktop app, and Codex CLI. Treat cleanup, moving code, and archiving as separate decisions.
 
 ## Workflow
 
-1. Identify and stop pending resources.
-2. Resolve git and worktree state.
-3. Archive the thread.
+1. Stop resources owned by this task.
+2. Inspect and preserve workspace changes.
+3. Send a closeout summary.
+4. Archive through the current surface when available and safe.
 
-Prefer completing all three steps in one turn. If a step is blocked, report the blocker clearly and do not perform later destructive or ambiguous actions.
+Complete the applicable steps in one turn. Skip irrelevant steps, such as Git checks in a web-only Work chat. If a step exposes possible data loss or requires a choice the user has not made, stop before the risky action and ask one focused question.
 
-## 1. Stop Pending Resources
+## 1. Stop Task-Owned Resources
 
-Find resources started during the conversation and stop only those resources.
+Stop only resources that this task started or clearly owns.
 
-- Check active tool sessions, terminals, app servers, file watchers, test watchers, browser sessions, background jobs, and tunnels mentioned in the thread.
-- For command sessions you started, stop them gracefully first with `Ctrl-C` or the equivalent session input. Confirm the prompt returns.
-- If a process was started outside a managed session, inspect it narrowly before killing it. Prefer commands that target the current repo path or known port rather than broad process name matches.
-- Do not stop user-owned processes unless the thread context makes ownership clear or the user explicitly approves.
-- If a dev server must remain running for the user, ask before stopping it.
+- Use conversation and tool-session state first to identify terminals, dev servers, file or test watchers, browser sessions, background jobs, app servers, and tunnels.
+- Interrupt managed command sessions gracefully with `Ctrl-C` or the equivalent session input, then confirm termination.
+- For an unmanaged process, inspect the exact PID, repository path, command, or known port before stopping it. A matching process name or listening port alone is insufficient proof of ownership.
+- Leave user-owned and uncertain processes running. Ask before stopping a server the user may still need.
+- Do not enumerate every system process or port when narrower evidence is available.
 
-Useful checks:
+## 2. Preserve Workspace Changes
 
-```bash
-git status --short --branch
-git worktree list --porcelain
-lsof -nP -iTCP -sTCP:LISTEN
-```
+If the task has no local workspace or repository, report that and continue.
 
-Use `lsof` output carefully: a listening port alone does not prove the process belongs to this thread.
-
-## 2. Resolve Git and Worktree State
-
-First, inspect the current repository:
+For a Git repository, inspect without mutating:
 
 ```bash
 git rev-parse --show-toplevel
 git status --short --branch
-git worktree list --porcelain
 git branch --show-current
-```
-
-If there are uncommitted changes, stop and report them. Do not stash, discard, commit, or merge unless the user explicitly asks.
-
-If the current checkout is not a linked worktree, report that there is no worktree merge to perform and continue to archive after resource cleanup.
-
-Treat the checkout as a linked worktree when its git directory is under the common repository's worktree metadata, for example:
-
-```bash
+git worktree list --porcelain
 git rev-parse --git-dir
 git rev-parse --git-common-dir
 ```
 
-### Determine The Starting Branch
+Classify the checkout as Local, an ordinary linked worktree, or a ChatGPT desktop managed worktree. Do not infer ownership or the starting branch from a directory or branch name alone.
 
-Merge back only to the branch the worktree was started from.
+Report staged, unstaged, and untracked changes. Closing does not by itself authorize committing, stashing, discarding, resetting, merging, rebasing, pushing, deleting a worktree, or creating a branch.
 
-Use, in order:
+### ChatGPT Desktop Managed Worktrees
 
-1. Explicit user or thread context naming the starting branch.
-2. Worktree setup metadata from the current environment, if present.
-3. Git evidence that is unambiguous, such as branch reflog entries, upstream configuration, or a known base branch recorded when the worktree was created.
+Treat a worktree created for a desktop Codex task as app-managed when task context or reliable environment metadata establishes that fact. These worktrees normally begin on detached `HEAD` and may include a copy of local uncommitted changes from the selected starting branch.
 
-Do not guess from branch names alone. If the starting branch cannot be determined confidently, stop and report what evidence is missing.
+- If the user wants to continue in the local checkout, prefer the desktop app's **Hand off** flow. It moves the task and Git state safely. Do not imitate Handoff with a manual merge.
+- If the user wants to keep working in the worktree, recommend **Create branch here** before committing, pushing, or opening a pull request.
+- Before archiving, explain that the desktop app may automatically remove a managed worktree after saving a recovery snapshot. Treat that snapshot as recovery, not as a substitute for the user's intended delivery path.
+- Do not archive while useful work exists only in the managed worktree unless it has been handed off, committed or pushed as authorized, or the user explicitly chooses archival with snapshot-only recovery.
+- Do not delete or prune a managed worktree manually as part of closing the task.
 
-### Fast-Forward Merge
+If Handoff is not callable from the current task, tell the user exactly which UI action is needed and pause archival until they complete it or choose another preservation path.
 
-When the current worktree is clean and the starting branch is known:
+### Ordinary Linked Worktrees
 
-1. Find an existing checkout of the starting branch with `git worktree list --porcelain`.
-2. If it exists, verify that checkout is clean, then run the merge from that checkout:
+Do not merge merely because the user said "close" or "archive." Merge only when the user explicitly asked to integrate the work.
 
-```bash
-git -C <starting-branch-worktree> status --short --branch
-git -C <starting-branch-worktree> merge --ff-only <current-worktree-branch-or-commit>
-```
+For an authorized fast-forward merge:
 
-If the starting-branch checkout has uncommitted changes, stop and report them. Do not merge into a dirty destination worktree unless the user explicitly approves.
-
-3. If the starting branch is not checked out anywhere, use a safe temporary checkout or switch only after confirming it will not disturb unrelated user work.
-4. If `merge --ff-only` fails, stop and report the non-fast-forward condition. Do not rebase, squash, force push, or create a merge commit.
-
-After the merge, verify:
+1. Establish the destination branch from explicit user or task context, recorded setup metadata, or unambiguous Git evidence. Never guess from branch names.
+2. Require a clean source worktree unless the user separately authorizes how to preserve its changes.
+3. Find the destination checkout with `git worktree list --porcelain` and require it to be clean.
+4. Run the merge from the destination checkout:
 
 ```bash
-git -C <starting-branch-worktree> status --short --branch
-git -C <starting-branch-worktree> log --oneline --decorate -5
+git -C <destination-worktree> merge --ff-only <source-branch-or-commit>
 ```
 
-Do not delete the worktree unless the user explicitly requested removal.
+5. Verify the destination status and recent log.
 
-## 3. Archive The Thread
+If fast-forwarding fails, report the divergence. Do not rebase, squash, force-push, or create a merge commit without separate authorization.
 
-Use the Codex thread archival tool instead of emitting raw directives.
+### Local Checkouts
 
-If the thread archival tool is not already available, search for `set_thread_archived` with tool discovery and call it after resource and git handling are complete.
+Leave authorized, unfinished local changes in place and report them. Ask how to preserve or publish them only when the requested archival or cleanup could make them inaccessible.
 
-Archive only after reporting or resolving blockers from the previous steps. If cleanup or merge is blocked, summarize the blocker and ask whether to archive anyway.
+## 3. Send The Closeout Summary
 
-## Final Response
+Before any archive action, send a concise summary containing:
 
-Before archiving, send a concise closeout summary:
+- resources stopped and resources deliberately left running;
+- workspace and Git cleanliness;
+- where useful changes remain and how they were preserved;
+- any Handoff, branch creation, commit, push, or merge result;
+- blockers and the one next action required from the user, if any.
 
-- Resources stopped or left running.
-- Git cleanliness result.
-- Worktree merge result, including source and destination branch when a merge occurred.
-- Any blockers or follow-up actions.
+Do not promise that the summary will remain visible after an archive action unless the surface documents that behavior.
 
-Then archive the thread with the available thread archival tool.
+## 4. Archive Through The Current Surface
+
+Use only an archive capability actually exposed by the current surface.
+
+- In ChatGPT Work or the ChatGPT desktop app, call an available task or chat archive action only after the closeout summary and preservation checks. If no callable archive action is exposed, tell the user to use the task or chat menu; do not invent a tool name or emit a raw control directive.
+- In Codex CLI, explain that the user can enter `/archive` after this turn. Do not try to archive the active CLI session by invoking a nested `codex archive` shell command.
+- In an app-server integration, use `thread/archive` only when that API is available and the exact current thread ID is already supplied by trusted runtime context.
+- Never inspect local session transcripts, archived-session directories, or unrelated conversation history to discover a thread ID.
+- Do not substitute deletion for archival. Deletion is permanent and requires an explicit, separate request.
+
+If preservation or cleanup remains blocked, ask whether to archive anyway and state the consequence. Otherwise, archive once and stop.
