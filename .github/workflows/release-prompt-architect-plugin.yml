@@ -1,0 +1,113 @@
+name: Package Prompt Architect plugin
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  package-plugin:
+    if: startsWith(github.event.release.tag_name, 'v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the released tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Derive and validate plugin version
+        id: version
+        shell: bash
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          version="${TAG_NAME#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Release tag must use a SemVer-compatible v-tag such as v1.2.3; got: $TAG_NAME" >&2
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Assemble plugin package
+        shell: bash
+        env:
+          PLUGIN_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          plugin_root="dist/prompt-architect"
+          mkdir -p "$plugin_root/.codex-plugin" "$plugin_root/skills/prompt-architect"
+          cp -R prompt-architect/. "$plugin_root/skills/prompt-architect/"
+
+          jq -n \
+            --arg version "$PLUGIN_VERSION" \
+            '{
+              name: "prompt-architect",
+              version: $version,
+              description: "Turn rough prompt ideas into complete, production-ready prompts through an iterative decision ledger.",
+              author: {
+                name: "Mate Gelei-Szego",
+                url: "https://mate.gelei.dev"
+              },
+              homepage: "https://mate.gelei.dev",
+              repository: "https://github.com/mgelei/gpt-skills/tree/main/prompt-architect",
+              license: "MIT",
+              keywords: ["prompts", "prompt-engineering", "productivity"],
+              skills: "./skills/",
+              interface: {
+                displayName: "Prompt Architect",
+                shortDescription: "Turn rough ideas into production-ready prompts",
+                longDescription: "Refine rough prompt ideas through an iterative clarification workflow and stable-numbered decision ledger, then render a complete prompt for ChatGPT or Codex.",
+                developerName: "Mate Gelei-Szego",
+                category: "Productivity",
+                capabilities: ["Prompt design", "Prompt refinement"],
+                websiteURL: "https://mate.gelei.dev",
+                defaultPrompt: [
+                  "Use Prompt Architect to turn this rough idea into a production-ready ChatGPT or Codex prompt."
+                ]
+              }
+            }' > "$plugin_root/.codex-plugin/plugin.json"
+
+      - name: Validate plugin package
+        shell: bash
+        env:
+          PLUGIN_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          plugin_root="dist/prompt-architect"
+          test -f "$plugin_root/.codex-plugin/plugin.json"
+          test -f "$plugin_root/skills/prompt-architect/SKILL.md"
+          jq -e \
+            --arg version "$PLUGIN_VERSION" \
+            '.name == "prompt-architect"
+              and .version == $version
+              and .skills == "./skills/"
+              and .homepage == "https://mate.gelei.dev"' \
+            "$plugin_root/.codex-plugin/plugin.json" > /dev/null
+
+      - name: Create plugin ZIP
+        id: package
+        shell: bash
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          asset_name="prompt-architect-openai-plugin-${TAG_NAME}.zip"
+          (cd dist && zip -r "../$asset_name" prompt-architect)
+          echo "asset_name=$asset_name" >> "$GITHUB_OUTPUT"
+
+      - name: Attach plugin ZIP to release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          ASSET_NAME: ${{ steps.package.outputs.asset_name }}
+        run: gh release upload "$TAG_NAME" "$ASSET_NAME" --clobber
