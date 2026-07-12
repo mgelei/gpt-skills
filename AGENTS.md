@@ -1,1 +1,2 @@
 - All agents must use Conventional Commits for every commit in this repository. Use the format `type(optional-scope): description`. Common types include `feat`, `fix`, `docs`, `refactor`, `test`, and `chore`.
+- When creating a new skill or significantly changing an existing skill, check whether the [Plugin Terms](https://mate.gelei.dev/plugin-terms/) or [Plugin Privacy Policy](https://mate.gelei.dev/plugin-privacy/) need to be updated.
