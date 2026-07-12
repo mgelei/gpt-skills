@@ -8,7 +8,9 @@ import json
 import re
 import shutil
 import tempfile
+import zipfile
 from pathlib import Path
+from pathlib import PurePosixPath
 
 
 PLUGIN_NAME = "prompt-architect-friends"
@@ -47,6 +49,25 @@ def validate_skill(skill_dir: Path) -> None:
         raise SystemExit(f"Missing frontmatter name: {skill_md}")
     if not re.search(r"(?m)^description:\s*\S", frontmatter):
         raise SystemExit(f"Missing frontmatter description: {skill_md}")
+
+
+def validate_archive(archive_path: Path) -> None:
+    with zipfile.ZipFile(archive_path) as archive:
+        names = [entry.filename for entry in archive.infolist()]
+
+    top_levels = {PurePosixPath(name).parts[0] for name in names if name}
+    if top_levels != {PLUGIN_NAME}:
+        raise SystemExit(
+            f"Plugin ZIP must contain exactly one {PLUGIN_NAME}/ top-level directory"
+        )
+
+    required = {
+        f"{PLUGIN_NAME}/.codex-plugin/plugin.json",
+        *(f"{PLUGIN_NAME}/skills/{skill_name}/SKILL.md" for skill_name in SKILLS),
+    }
+    missing = sorted(required.difference(names))
+    if missing:
+        raise SystemExit(f"Plugin ZIP is missing required files: {', '.join(missing)}")
 
 
 def build(version: str, output_dir: Path) -> Path:
@@ -92,7 +113,14 @@ def build(version: str, output_dir: Path) -> Path:
             encoding="utf-8",
         )
 
-        shutil.make_archive(str(archive_base), "zip", root_dir=package_root)
+        shutil.make_archive(
+            str(archive_base),
+            "zip",
+            root_dir=package_root.parent,
+            base_dir=PLUGIN_NAME,
+        )
+
+    validate_archive(archive_path)
 
     print(archive_path)
     return archive_path
