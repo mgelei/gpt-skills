@@ -7,6 +7,7 @@ import argparse
 import json
 import re
 import stat
+import struct
 import tempfile
 import zipfile
 from pathlib import Path, PurePosixPath
@@ -64,6 +65,25 @@ def validate_https_url(value: Any, field: str) -> None:
     parsed = urlparse(value) if isinstance(value, str) else None
     if parsed is None or parsed.scheme != "https" or not parsed.netloc:
         fail(f"`{field}` must be an absolute HTTPS URL")
+
+
+def validate_required_image(plugin_root: Path, interface: dict[str, Any], field: str) -> None:
+    relative = require_string(interface, field, "interface")
+    path = PurePosixPath(relative)
+    if not relative.startswith("./") or path.is_absolute() or ".." in path.parts:
+        fail(f"`interface.{field}` must be a safe `./`-relative path")
+    image_path = (plugin_root / relative).resolve()
+    if plugin_root not in image_path.parents or not image_path.is_file():
+        fail(f"`interface.{field}` must reference an image inside the plugin")
+    header = image_path.read_bytes()[:26]
+    if header[:8] != b"\x89PNG\r\n\x1a\n" or header[12:16] != b"IHDR":
+        fail(f"`interface.{field}` must reference a PNG image")
+    width, height = struct.unpack(">II", header[16:24])
+    if width == 0 or width != height:
+        fail(f"`interface.{field}` must reference a non-empty square image")
+    bit_depth, color_type = header[24:26]
+    if bit_depth != 8 or color_type != 6:
+        fail(f"`interface.{field}` must reference an 8-bit RGBA PNG")
 
 
 def validate_manifest(plugin_root: Path, expected_version: str) -> None:
@@ -134,6 +154,8 @@ def validate_manifest(plugin_root: Path, expected_version: str) -> None:
             validate_https_url(interface[field], f"interface.{field}")
     if "brandColor" in interface and not HEX_COLOR_RE.fullmatch(interface["brandColor"]):
         fail("`interface.brandColor` must use `#RRGGBB`")
+    for field in ("composerIcon", "logo"):
+        validate_required_image(plugin_root, interface, field)
 
     skills_root = plugin_root / "skills"
     skill_dirs = sorted(path for path in skills_root.iterdir() if path.is_dir())
@@ -174,12 +196,11 @@ def validate_archive(archive: Path, expected_version: str) -> None:
             fail(f"ZIP must contain exactly one `{PLUGIN_NAME}` top-level directory")
         required = {
             f"{PLUGIN_NAME}/.codex-plugin/plugin.json",
+            f"{PLUGIN_NAME}/assets/icon.png",
             f"{PLUGIN_NAME}/skills/{PLUGIN_NAME}/SKILL.md",
         }
         if not required.issubset(names):
-            fail("ZIP is missing the plugin manifest or SKILL.md")
-        if any("/assets/" in name for name in names):
-            fail("skills-only package must not contain unused image assets")
+            fail("ZIP is missing the plugin manifest, icon, or SKILL.md")
         with tempfile.TemporaryDirectory() as directory:
             bundle.extractall(directory)
             validate_manifest(Path(directory) / PLUGIN_NAME, expected_version)

@@ -44,8 +44,10 @@ jobs:
           plugin_root="dist/prompt-architect"
           mkdir -p \
             "$plugin_root/.codex-plugin" \
+            "$plugin_root/assets" \
             "$plugin_root/skills/prompt-architect"
           cp -R prompt-architect/. "$plugin_root/skills/prompt-architect/"
+          cp .github/assets/prompt-architect-icon.png "$plugin_root/assets/icon.png"
 
           jq -n \
             --arg version "$PLUGIN_VERSION" \
@@ -73,7 +75,9 @@ jobs:
                 defaultPrompt: [
                   "Use Prompt Architect to turn this rough idea into a production-ready ChatGPT or Codex prompt."
                 ],
-                brandColor: "#232B55"
+                brandColor: "#232B55",
+                composerIcon: "./assets/icon.png",
+                logo: "./assets/icon.png"
               }
             }' > "$plugin_root/.codex-plugin/plugin.json"
 
