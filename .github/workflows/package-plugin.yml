@@ -29,7 +29,7 @@ jobs:
           fi
 
       - name: Build plugin package
-        run: python3 scripts/package_plugin.py --version "${RELEASE_TAG#v}"
+        run: python3 .plugin/package_plugin.py --version "${RELEASE_TAG#v}"
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4

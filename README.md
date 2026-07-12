@@ -19,5 +19,5 @@ workflow packages all four skills with the store manifest and logo, injects
 Build the same ZIP locally with:
 
 ```sh
-python3 scripts/package_plugin.py --version 1.0.1
+python3 .plugin/package_plugin.py --version 1.0.1
 ```

@@ -54,7 +54,7 @@ def build(version: str, output_dir: Path) -> Path:
         raise SystemExit(f"Version must be strict semver without a leading v: {version}")
 
     repo_root = Path(__file__).resolve().parent.parent
-    template_root = repo_root / "store-package" / PLUGIN_NAME
+    template_root = repo_root / ".plugin" / "package" / PLUGIN_NAME
     manifest_source = template_root / ".codex-plugin" / "plugin.json"
     if not manifest_source.is_file():
         raise SystemExit(f"Missing plugin manifest: {manifest_source}")
