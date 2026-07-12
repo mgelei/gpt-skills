@@ -1,0 +1,44 @@
+name: Package ChatGPT plugin
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: Build and attach plugin ZIP
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
+
+    steps:
+      - name: Check out the released revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Validate release tag
+        shell: bash
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Release tag must be strict semver prefixed with v (for example, v1.0.1)." >&2
+            exit 1
+          fi
+
+      - name: Build plugin package
+        run: python3 .plugin/package_plugin.py --version "${RELEASE_TAG#v}"
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prompt-architect-friends-${{ github.event.release.tag_name }}
+          path: dist/prompt-architect-friends-*.zip
+          if-no-files-found: error
+
+      - name: Attach ZIP to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$RELEASE_TAG" dist/prompt-architect-friends-*.zip --clobber
