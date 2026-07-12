@@ -44,12 +44,8 @@ jobs:
           plugin_root="dist/prompt-architect"
           mkdir -p \
             "$plugin_root/.codex-plugin" \
-            "$plugin_root/assets" \
             "$plugin_root/skills/prompt-architect"
           cp -R prompt-architect/. "$plugin_root/skills/prompt-architect/"
-          base64 --decode > "$plugin_root/assets/icon.png" <<'BASE64'
-          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
-          BASE64
 
           jq -n \
             --arg version "$PLUGIN_VERSION" \
@@ -77,81 +73,35 @@ jobs:
                 defaultPrompt: [
                   "Use Prompt Architect to turn this rough idea into a production-ready ChatGPT or Codex prompt."
                 ],
-                brandColor: "#232B55",
-                composerIcon: "./assets/icon.png",
-                logo: "./assets/icon.png"
+                brandColor: "#232B55"
               }
             }' > "$plugin_root/.codex-plugin/plugin.json"
 
-      - name: Validate plugin package
-        shell: bash
+      - name: Install validation dependency
+        run: python3 -m pip install --disable-pip-version-check PyYAML
+
+      - name: Validate assembled plugin
         env:
           PLUGIN_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          set -euo pipefail
+          python3 .github/scripts/validate_prompt_architect_plugin.py \
+            --plugin-root dist/prompt-architect \
+            --expected-version "$PLUGIN_VERSION"
 
-          plugin_root="dist/prompt-architect"
-          manifest="$plugin_root/.codex-plugin/plugin.json"
-
-          test -f "$manifest"
-          test -f "$plugin_root/skills/prompt-architect/SKILL.md"
-
-          jq -e \
-            --arg version "$PLUGIN_VERSION" \
-            '.name == "prompt-architect"
-              and .version == $version
-              and (.description | type == "string" and length > 0)
-              and (.author.name | type == "string" and length > 0)
-              and .skills == "./skills/"
-              and .homepage == "https://mate.gelei.dev"
-              and (.interface.displayName | type == "string" and length > 0)
-              and (.interface.shortDescription | type == "string" and length > 0)
-              and (.interface.longDescription | type == "string" and length > 0)
-              and (.interface.developerName | type == "string" and length > 0)
-              and (.interface.category | type == "string" and length > 0)
-              and (.interface.capabilities | type == "array" and length > 0)
-              and (.interface.defaultPrompt | type == "array" and length > 0 and length <= 3)
-              and .interface.websiteURL == "https://mate.gelei.dev"
-              and (.interface.brandColor | test("^#[0-9A-Fa-f]{6}$"))
-              and .interface.composerIcon == "./assets/icon.png"
-              and .interface.logo == "./assets/icon.png"' \
-            "$manifest" > /dev/null
-
-          python3 - "$plugin_root" "$manifest" <<'PY'
-          import json
-          import struct
-          import sys
-          from pathlib import Path
-
-          plugin_root = Path(sys.argv[1]).resolve()
-          manifest = json.loads(Path(sys.argv[2]).read_text())
-
-          for field in ("composerIcon", "logo"):
-              relative = manifest["interface"][field]
-              asset = (plugin_root / relative).resolve()
-              if plugin_root not in asset.parents:
-                  raise SystemExit(f"{field} escapes the plugin root: {relative}")
-              with asset.open("rb") as image:
-                  header = image.read(24)
-              if header[:8] != b"\x89PNG\r\n\x1a\n" or header[12:16] != b"IHDR":
-                  raise SystemExit(f"{field} must reference a PNG image: {relative}")
-              width, height = struct.unpack(">II", header[16:24])
-              if width != height:
-                  raise SystemExit(
-                      f"{field} must reference a square image; got {width}x{height}: {relative}"
-                  )
-          PY
-
-      - name: Create plugin ZIP
+      - name: Create and validate plugin ZIP
         id: package
         shell: bash
         env:
+          PLUGIN_VERSION: ${{ steps.version.outputs.version }}
           TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
 
           asset_name="prompt-architect-openai-plugin-${TAG_NAME}.zip"
           (cd dist && zip -r "../$asset_name" prompt-architect)
+          python3 .github/scripts/validate_prompt_architect_plugin.py \
+            --archive "$asset_name" \
+            --expected-version "$PLUGIN_VERSION"
           echo "asset_name=$asset_name" >> "$GITHUB_OUTPUT"
 
       - name: Attach plugin ZIP to release
