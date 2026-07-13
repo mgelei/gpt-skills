@@ -1,0 +1,40 @@
+{
+  "name": "prompt-architect",
+  "version": "1.0.0",
+  "description": "Turn rough ideas into complete prompts through a structured clarification workflow.",
+  "author": {
+    "name": "Mate Gelei-Szego",
+    "url": "https://mate.gelei.dev/"
+  },
+  "homepage": "https://github.com/mgelei/gpt-skills/tree/main/prompt-architect",
+  "repository": "https://github.com/mgelei/gpt-skills",
+  "license": "MIT",
+  "keywords": [
+    "prompts",
+    "prompt-engineering",
+    "writing",
+    "productivity"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Prompt Architect",
+    "shortDescription": "Turn rough ideas into production-ready prompts",
+    "longDescription": "Clarifies material decisions with a stable numbered ledger, applies overrides precisely, and renders a complete prompt for ChatGPT, Codex, persistent instructions, Custom GPTs, or reusable skills.",
+    "developerName": "Mate Gelei-Szego",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive"
+    ],
+    "websiteURL": "https://mate.gelei.dev/",
+    "privacyPolicyURL": "https://mate.gelei.dev/plugin-privacy/",
+    "termsOfServiceURL": "https://mate.gelei.dev/plugin-terms/",
+    "defaultPrompt": [
+      "Turn my rough idea into a production-ready prompt.",
+      "Improve this Codex prompt and resolve missing decisions.",
+      "Design durable instructions for my ChatGPT project."
+    ],
+    "brandColor": "#10664A",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
+  }
+}
