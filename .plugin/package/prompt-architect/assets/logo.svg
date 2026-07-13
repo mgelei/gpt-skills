@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
-  <title id="title">Prompt Architect logo</title>
-  <desc id="desc">A white prompt cursor and drafting compass on a deep green square.</desc>
-  <rect width="1024" height="1024" rx="224" fill="#10664A"/>
-  <path d="M250 336 410 496 250 656" fill="none" stroke="#FFFFFF" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M430 704h166" fill="none" stroke="#FFFFFF" stroke-width="72" stroke-linecap="round"/>
-  <circle cx="698" cy="322" r="42" fill="#FFFFFF"/>
-  <path d="M698 376 586 718M698 376l112 342M628 594h140" fill="none" stroke="#FFFFFF" stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
