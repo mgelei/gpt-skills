@@ -45,12 +45,14 @@ Classify the checkout as Local, an ordinary linked worktree, or a ChatGPT deskto
 
 Report staged, unstaged, and untracked changes. Closing does not by itself authorize committing, stashing, discarding, resetting, merging, rebasing, pushing, deleting a worktree, or creating a branch.
 
+When the user authorizes a commit in a worktree, commit to the branch the worktree was created from by default. Establish that starting branch from explicit user or task context, recorded setup metadata, or unambiguous Git evidence. Do not create a new branch unless the user explicitly asks for one. If the worktree is detached or the starting branch is checked out elsewhere, use the surface's supported Handoff flow or commit from that branch's existing checkout; if neither path is safely available, pause and ask rather than inventing a branch.
+
 ### ChatGPT Desktop Managed Worktrees
 
 Treat a worktree created for a desktop Codex task as app-managed when task context or reliable environment metadata establishes that fact. These worktrees normally begin on detached `HEAD` and may include a copy of local uncommitted changes from the selected starting branch.
 
 - If the user wants to continue in the local checkout, prefer the desktop app's **Hand off** flow. It moves the task and Git state safely. Do not imitate Handoff with a manual merge.
-- If the user wants to keep working in the worktree, recommend **Create branch here** before committing, pushing, or opening a pull request.
+- If the user wants to keep working in the worktree, preserve its relationship to the established starting branch. Do not recommend **Create branch here** unless the user explicitly asks for a new branch.
 - Before archiving, explain that the desktop app may automatically remove a managed worktree after saving a recovery snapshot. Treat that snapshot as recovery, not as a substitute for the user's intended delivery path.
 - Do not archive while useful work exists only in the managed worktree unless it has been handed off, committed or pushed as authorized, or the user explicitly chooses archival with snapshot-only recovery.
 - Do not delete or prune a managed worktree manually as part of closing the task.
