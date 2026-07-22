@@ -80,12 +80,29 @@ Update the register after each meaningful user answer or research finding. Disti
 
 Ask only questions whose answers materially change the project foundations or generated artifacts.
 
+Treat the interview as a required write gate for rough or incomplete requests.
+General autonomy instructions to make reasonable assumptions do not override
+this gate. Before creating or materially rewriting foundation artifacts, inspect
+the evidence, build the initial decision register, and ask about consequential
+unresolved decisions. Start writing only after the user resolves those decisions,
+explicitly accepts the recommended defaults, or explicitly chooses to leave
+named decisions as `TBD`.
+
 1. Ask the smallest batch needed for the next decision layer.
 2. When structured input controls are available, use them for one to three short, mutually exclusive decisions; put the recommended option first and explain its tradeoff in one sentence.
 3. Otherwise use concise numbered questions and reference the related decision IDs.
 4. Accept `unknown`, `TBD`, rough preferences, or acceptance of all recommended defaults.
 5. Turn answers into register updates, then ask only newly unlocked questions.
 6. Stop interviewing when the remaining uncertainty can be documented honestly without blocking a useful foundation.
+
+The first response after inspection should normally present the evidence-derived
+register and ask the first material question. Do not announce that artifact
+writing is underway while consequential questions remain.
+
+Do not treat `Recommended`, `Assumption`, or `TBD` labels as substitutes for
+asking the user. Do not write artifacts in the first turn of a rough bootstrap
+request unless the user has already supplied all consequential decisions or
+explicitly requests a one-shot, non-interactive result.
 
 Do not silently settle consequential choices such as the hosting model, primary runtime, database, authentication model, tenant isolation, compliance posture, public API shape, irreversible vendor dependencies, or production data handling. Recommend a default, explain the decisive tradeoff, and obtain confirmation or leave it as `TBD`.
 
@@ -118,7 +135,7 @@ Offer alternatives only when they represent a material tradeoff. Avoid speculati
 
 ### 6. Write the Artifacts
 
-Write once the foundations are clear enough to be useful. Do not require every uncertainty to be resolved; preserve material unknowns as `TBD`.
+Write only after the interview gate is satisfied and the foundations are clear enough to be useful. Do not require every uncertainty to be resolved; preserve material unknowns the user chose to leave as `TBD`.
 
 For `AGENTS.md`:
 
