@@ -18,7 +18,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Prompt Architect & friends",
-    "shortDescription": "Design prompts, shape projects, challenge plans, and close tasks",
+    "shortDescription": "Plays the devil's advocate",
     "longDescription": "Four practical skills for ChatGPT and Codex: turn rough ideas into production-ready prompts, establish durable project foundations, stress-test plans one decision at a time, and close completed tasks safely.",
     "developerName": "Mate Gelei-Szego",
     "category": "Productivity",
