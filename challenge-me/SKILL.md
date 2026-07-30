@@ -46,19 +46,17 @@ When the user says "I don't know" or "you decide":
 
 Challenge the plan, not the person. Be direct about consequences without becoming adversarial.
 
-## Delegate noisy reconnaissance
+## Control noisy reconnaissance
 
 Keep the interview, decision tree, recommendations, running state, and synthesis on the main thread.
 
-When reconnaissance would traverse many files or sources and flood the main context with raw exploration, explicitly request or spawn one focused exploration subagent. Ask it to return only:
+When reconnaissance would traverse many files or sources, keep the pass focused and retain only:
 
 - the relevant pattern in 1–2 sentences
 - the load-bearing file paths or sources
 - the fact that changes the next recommendation
 
-Keep its response under about 150 words and exclude code dumps. If the result is shallow, re-ask once with a sharper prompt, then investigate inline. If the harness cannot provide a subagent, continue inline without turning availability into a user decision.
-
-Do not delegate a one-shot search or a single named file. Do not spawn per question, fan out agents for one decision, or delegate judgment and conversation state.
+Exclude code dumps and raw search output from the conversation. Narrow a shallow result once, then inspect the decisive source directly. Treat delegation and multi-agent execution as runtime choices rather than requirements of this skill; do not turn their availability into a user decision or delegate judgment and conversation state.
 
 ## Maintain the decision record
 
