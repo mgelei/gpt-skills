@@ -1,6 +1,7 @@
 # GPT-5.6 prompting research
 
-Status: decision record for [#26](https://github.com/mgelei/gpt-skills/issues/26) and input to [#25](https://github.com/mgelei/gpt-skills/issues/25)  
+Status: decision record for [#26](https://github.com/mgelei/gpt-skills/issues/26), input to [#25](https://github.com/mgelei/gpt-skills/issues/25), and evidence base for the skill audit in [#27](https://github.com/mgelei/gpt-skills/issues/27)
+
 Researched: 2026-07-30
 
 ## Decision
@@ -89,6 +90,19 @@ No immediate rewrite is justified by the research. The likely improvements are n
 5. Track API migration work—model tiers, reasoning settings, state replay, caching, PTC, multi-agent, and tool schemas—in a separate implementation issue. They are not prompt-only changes.
 6. Revisit all GPT-5.6 guidance after OpenAI changes the beta features or publishes stable model snapshots; the current note reflects documentation available on 2026-07-30.
 
+## Existing skill audit for #27
+
+This is a static contract audit against the guidance above. It identifies prompt-level incompatibilities and unjustified migration edits; it does not replace the representative GPT-5.6 evals proposed for #25.
+
+| Skill | Finding | Action |
+| --- | --- | --- |
+| [`bootstrap-project`](../bootstrap-project/SKILL.md) | Compatible. Its length mainly encodes a consequential interview write gate, evidence boundaries, artifact contracts, and validation. Those constraints should survive prompt compression. It does not request model settings or hidden reasoning, and it keeps current research conditional on need. | No change. Evaluate whether repeated interview-gate wording can be shortened only after a regression case shows equal compliance with fewer tokens. |
+| [`challenge-me`](../challenge-me/SKILL.md) | One prompt-level incompatibility. The skill required spawning a subagent for noisy reconnaissance, although multi-agent execution is a runtime choice and may not exist on every supported surface. The useful contract is focused reconnaissance and a compact decision-changing result, not the orchestration mechanism. | Replace the subagent requirement with capability-neutral context-control guidance. Preserve the main-thread ownership, result shape, and non-delegable judgment boundaries. |
+| [`close-thread`](../close-thread/SKILL.md) | Compatible. Its repeated-looking cautions apply to distinct destructive or data-loss boundaries across local checkouts, ordinary worktrees, managed worktrees, and archival surfaces. These are safety and permission invariants, not obsolete process scaffolding. | No change. Do not compress the preservation and approval rules without surface-specific loss-prevention evals. |
+| [`prompt-architect`](../prompt-architect/SKILL.md) | Compatible. It already produces outcome-first prompts, separates prompt prose from API settings, removes redundancy, defines authority and validation, and preserves its strict ledger and final-output product contracts. | No immediate change. Gate the four narrower opportunities already listed under repository implications—personality versus collaboration, grounded-research evidence rules, frontend rendered-state checks, and API/harness separation—on representative failures. |
+
+Audit conclusion: all four skills can target GPT-5.6 without wholesale rewrites. Only `challenge-me` needs a surgical prompt change. No skill should embed a GPT-5.6 model slug, reasoning level, Pro mode, state-replay policy, PTC requirement, or multi-agent requirement; those remain runtime configuration and evaluation concerns.
+
 ## Plugin terms and privacy review
 
-This documentation-only change does not add a tool, connector, publisher backend, data flow, telemetry, or new user action. No update is needed to the current [Plugin Terms](https://mate.gelei.dev/plugin-terms/) or [Plugin Privacy Policy](https://mate.gelei.dev/plugin-privacy/). Reassess if #25 later changes a skill to invoke new external services, collect or transmit data, or materially expands autonomous actions.
+This audit and the `challenge-me` wording change do not add a tool, connector, publisher backend, data flow, telemetry, or new user action. No update is needed to the current [Plugin Terms](https://mate.gelei.dev/plugin-terms/) or [Plugin Privacy Policy](https://mate.gelei.dev/plugin-privacy/). Reassess if later work changes a skill to invoke new external services, collect or transmit data, or materially expands autonomous actions.
