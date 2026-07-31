@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prompt Upgrade"
+  short_description: "Audit and upgrade prompts for GPT-5.6"
+  default_prompt: "Use $prompt-upgrade to audit this prompt and rewrite it for GPT-5.6 without changing its intent."
