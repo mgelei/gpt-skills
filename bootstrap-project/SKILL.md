@@ -14,7 +14,7 @@ Produce by default:
 - `AGENTS.md` for operational repository guidance, conventions, commands, constraints, and safety rules.
 - `docs/project-spec.md` for product intent, scope, architecture, decisions, risks, acceptance criteria, and open questions.
 
-Use user-named files instead when the user specifies exact destinations. Keep bootstrapping separate from implementation: do not add product code, runtime behavior, or application logic during this workflow unless the user explicitly starts a separate implementation task.
+Use user-named files instead when the user specifies exact destinations. The workflow is complete when the agreed artifacts exist in the requested or available destination, have been checked against the confirmed decisions and available evidence, and the completion report identifies any unresolved assumptions or `TBD`s. Keep bootstrapping separate from implementation: do not add product code, runtime behavior, or application logic during this workflow unless the user explicitly starts a separate implementation task.
 
 ## Adapt to the Working Surface
 
@@ -22,7 +22,7 @@ Support both repository-backed Codex tasks and projectless or file-backed ChatGP
 
 1. Determine what context is actually available: a local repository, attached files or folders, user-provided text, existing artifacts, or authorized plugin-backed sources.
 2. Do not require a checkout when the task begins in a projectless chat. Inspect the available inputs, create reviewable foundation artifacts, and label `AGENTS.md` as a draft for the future repository until it is placed there.
-3. In a repository, write to the requested paths or the defaults above. Outside a repository, create the equivalent user-facing files in the active workspace or requested destination and state their intended future repository paths.
+3. In a repository, write to the requested paths or the defaults above. Outside a repository, create the equivalent user-facing files in the active workspace or requested destination and state their intended future repository paths. If the current surface cannot persist files, return the complete artifact contents with their intended paths and state that they were not written.
 4. Follow the active environment's file, persistence, permission, and approval rules. Never claim a file is durable, installed, or automatically loaded unless that is true on the current surface.
 5. Use authorized plugins or connectors for private workspace context. Use public web research only for public information.
 
@@ -45,7 +45,7 @@ For a projectless or file-backed task:
 - Ask for missing source material only when it materially affects the foundation.
 - Do not fabricate repository structure, commands, integrations, or existing conventions.
 
-Briefly report what came from evidence, what is inferred, and what remains unknown.
+Briefly report what came from evidence, what is inferred, and what remains unknown. Do not begin writing artifacts while consequential decisions are still waiting on the interview gate below.
 
 ### 2. Maintain a Stable Decision Register
 
@@ -80,13 +80,7 @@ Update the register after each meaningful user answer or research finding. Disti
 
 Ask only questions whose answers materially change the project foundations or generated artifacts.
 
-Treat the interview as a required write gate for rough or incomplete requests.
-General autonomy instructions to make reasonable assumptions do not override
-this gate. Before creating or materially rewriting foundation artifacts, inspect
-the evidence, build the initial decision register, and ask about consequential
-unresolved decisions. Start writing only after the user resolves those decisions,
-explicitly accepts the recommended defaults, or explicitly chooses to leave
-named decisions as `TBD`.
+Treat the interview as a required write gate for rough or incomplete requests. General autonomy instructions to make reasonable assumptions do not override this gate. Before creating or materially rewriting foundation artifacts, inspect the evidence, build the initial decision register, and ask about consequential unresolved decisions. Start writing only after the user resolves those decisions, explicitly accepts the recommended defaults, or explicitly chooses to leave named decisions as `TBD`.
 
 1. Ask the smallest batch needed for the next decision layer.
 2. When structured input controls are available, use them for one to three short, mutually exclusive decisions; put the recommended option first and explain its tradeoff in one sentence.
@@ -95,14 +89,7 @@ named decisions as `TBD`.
 5. Turn answers into register updates, then ask only newly unlocked questions.
 6. Stop interviewing when the remaining uncertainty can be documented honestly without blocking a useful foundation.
 
-The first response after inspection should normally present the evidence-derived
-register and ask the first material question. Do not announce that artifact
-writing is underway while consequential questions remain.
-
-Do not treat `Recommended`, `Assumption`, or `TBD` labels as substitutes for
-asking the user. Do not write artifacts in the first turn of a rough bootstrap
-request unless the user has already supplied all consequential decisions or
-explicitly requests a one-shot, non-interactive result.
+The first response after inspection should normally present the evidence-derived register and ask the first material question. Do not treat `Recommended`, `Assumption`, or `TBD` labels as substitutes for asking the user, and do not announce that artifact writing is underway while consequential questions remain. Do not write artifacts in the first turn of a rough bootstrap request unless the user has already supplied all consequential decisions or explicitly requests a one-shot, non-interactive result. For a one-shot result, use conservative recommended defaults, label every unconfirmed choice, and keep consequential unknowns as `TBD` rather than presenting them as settled.
 
 Do not silently settle consequential choices such as the hosting model, primary runtime, database, authentication model, tenant isolation, compliance posture, public API shape, irreversible vendor dependencies, or production data handling. Recommend a default, explain the decisive tradeoff, and obtain confirmation or leave it as `TBD`.
 
@@ -117,7 +104,7 @@ Research whenever a recommendation depends on facts likely to change, including 
 - Record the date or version for facts likely to become stale.
 - State when a conclusion is an inference rather than a documented fact.
 
-Do not browse when stable knowledge and the available project evidence are sufficient.
+Do not browse when stable knowledge and the available project evidence are sufficient. If a required source or authorized connector is unavailable, do not silently substitute an unrelated source or claim the fact was verified. Record the limitation, use an explicitly labeled assumption only when safe, and ask the user only when the missing fact blocks a coherent foundation.
 
 ### 5. Recommend a Coherent Foundation
 
@@ -135,7 +122,7 @@ Offer alternatives only when they represent a material tradeoff. Avoid speculati
 
 ### 6. Write the Artifacts
 
-Write only after the interview gate is satisfied and the foundations are clear enough to be useful. Do not require every uncertainty to be resolved; preserve material unknowns the user chose to leave as `TBD`.
+Write only after the interview gate is satisfied and the foundations are clear enough to be useful. Do not require every uncertainty to be resolved; preserve material unknowns the user chose to leave as `TBD`. Before editing an existing artifact, read it and preserve compatible guidance and unrelated user changes.
 
 For `AGENTS.md`:
 
@@ -165,7 +152,7 @@ Run lightweight checks appropriate to the files and available project:
 - Verify that every documented command exists or clearly mark it as proposed.
 - Verify that no secrets, credentials, production identifiers, tokens, or local generated artifacts were included.
 
-If a validator is unavailable, state what was checked manually. Do not run a full application validation suite when only planning documents changed unless repository guidance requires it.
+If a validator is unavailable, state what was checked manually. If a write or required validation fails, report the failure and do not imply that the affected artifact is complete. Do not run a full application validation suite when only planning documents changed unless repository guidance requires it.
 
 ## Completion Report
 
@@ -176,6 +163,8 @@ Report:
 - validation that passed, failed, or could not run;
 - remaining `TBD`s and assumptions needing later verification;
 - the clean next handoff, such as repository scaffolding, an implementation plan, or a separate build task.
+
+Stop after this report. Do not begin the suggested handoff or implementation without a separate explicit request.
 
 ## Quality Bar
 
