@@ -2,3 +2,5 @@ interface:
   display_name: "Prompt Architect"
   short_description: "Design and refine reliable, ready-to-use prompts"
   default_prompt: "Use $prompt-architect to turn this rough idea or draft into a paste-ready prompt."
+policy:
+  allow_implicit_invocation: false
