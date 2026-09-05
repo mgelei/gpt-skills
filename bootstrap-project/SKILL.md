@@ -51,7 +51,7 @@ Keep researched facts distinct from recommendations and inferences.
 
 ## Resolve Consequential Decisions
 
-For rough or incomplete requests, the interview is a write gate. Inspect the evidence, present the initial register, and ask the first material question before creating or materially rewriting artifacts. Write only after the user resolves consequential decisions, accepts the recommended defaults, or explicitly leaves named decisions as `TBD`. General autonomy instructions do not override this gate.
+For rough or incomplete requests, inspect the evidence and present the initial register before writing. If consequential decisions remain unresolved, ask the first material question before creating or materially rewriting artifacts. The user's instructions take precedence over this interview workflow: honor prior answers, accepted defaults, and authorization to proceed without another confirmation. Write once consequential decisions are resolved, covered by that authorization, or explicitly left as `TBD`; keep unconfirmed choices visibly labeled.
 
 - Ask only questions that materially change the foundations, in the smallest useful batch.
 - When structured input controls are available, use them for one to three mutually exclusive decisions, placing the recommended option first with a one-sentence tradeoff. Otherwise ask concise numbered questions tied to decision IDs.

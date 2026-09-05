@@ -6,8 +6,10 @@ Collection of useful and semi-useful Skills for ChatGPT and Codex
 | [`bootstrap-project`](bootstrap-project/) | Turns rough software or product ideas into durable project foundations. It clarifies consequential decisions and creates repository guidance and a high-level project specification. |
 | [`challenge-me`](challenge-me/) | Stress-tests a plan or design through a depth-first interview. It resolves material decisions one at a time and produces a concrete decision record. |
 | [`close-thread`](close-thread/) | Closes a ChatGPT Work or Codex task safely. It cleans up task-owned resources, preserves repository changes, summarizes the work, and archives the task when appropriate. |
-| [`prompt-architect`](prompt-architect/) | Creates, audits, and revises reliable GPT-5.6 prompts for interactive OpenAI surfaces. It prefers structured questioning when available and falls back to a stable numbered decision ledger. |
-| [`prompt-upgrade`](prompt-upgrade/) | Audits an existing prompt against GPT-5.6 guidance, explains material changes, and produces a behavior-preserving upgraded prompt. |
+| [`prompt-architect`](prompt-architect/) | Creates, audits, and revises reliable GPT-6 Astra prompts for interactive OpenAI surfaces. It uses a stable numbered decision ledger to resolve material choices before rendering. |
+| [`prompt-upgrade`](prompt-upgrade/) | Audits an existing prompt against GPT-6 Astra guidance, explains material changes, and produces a behavior-preserving upgraded prompt. |
+
+All skills assume GPT-6 Astra.
 
 ## Store package
 
