@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "Prompt Architect & friends",
     "shortDescription": "Plays the devil's advocate",
-    "longDescription": "Five practical skills for ChatGPT and Codex: turn rough ideas into production-ready prompts, upgrade existing prompts for GPT-5.6, establish durable project foundations, stress-test plans one decision at a time, and close completed tasks safely.",
+    "longDescription": "Five practical skills for ChatGPT and Codex: turn rough ideas into production-ready prompts, upgrade existing prompts for GPT-6 Astra, establish durable project foundations, stress-test plans one decision at a time, and close completed tasks safely.",
     "developerName": "Mate Gelei-Szego",
     "category": "Productivity",
     "capabilities": [
@@ -31,7 +31,7 @@
     "termsOfServiceURL": "https://mate.gelei.dev/plugin-terms/",
     "defaultPrompt": [
       "Turn my rough idea into a production-ready prompt.",
-      "Audit and upgrade this prompt for GPT-5.6 without changing its intent.",
+      "Audit and upgrade this prompt for GPT-6 Astra without changing its intent.",
       "Help me establish durable foundations for this project.",
       "Stress-test this plan one decision at a time."
     ],
