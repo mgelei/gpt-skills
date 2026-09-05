@@ -9,7 +9,7 @@ Collection of useful and semi-useful Skills for ChatGPT and Codex
 | [`prompt-architect`](prompt-architect/) | Creates, audits, and revises reliable GPT-6 Astra prompts for interactive OpenAI surfaces. It uses a stable numbered decision ledger to resolve material choices before rendering. |
 | [`prompt-upgrade`](prompt-upgrade/) | Audits an existing prompt against GPT-6 Astra guidance, explains material changes, and produces a behavior-preserving upgraded prompt. |
 
-All skills assume GPT-6 Astra. See the [prompting guidance and audit decisions](docs/gpt-6-astra-prompt-guidance.md).
+All skills assume GPT-6 Astra.
 
 ## Store package
 
