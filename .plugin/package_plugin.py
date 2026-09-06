@@ -20,6 +20,7 @@ SKILLS = (
     "close-thread",
     "prompt-architect",
     "prompt-upgrade",
+    "research-compare",
 )
 SEMVER = re.compile(
     r"^(0|[1-9]\d*)\."
