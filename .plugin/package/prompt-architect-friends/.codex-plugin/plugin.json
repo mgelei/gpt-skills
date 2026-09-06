@@ -1,7 +1,7 @@
 {
   "name": "prompt-architect-friends",
   "version": "0.0.0",
-  "description": "A collection of practical skills for designing and upgrading prompts, bootstrapping projects, challenging plans, and closing tasks safely.",
+  "description": "A collection of practical skills for designing and upgrading prompts, bootstrapping projects, challenging plans, comparing products and services through research, and closing tasks safely.",
   "author": {
     "name": "Mate Gelei-Szego",
     "url": "https://mate.gelei.dev/"
@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "Prompt Architect & friends",
     "shortDescription": "Plays the devil's advocate",
-    "longDescription": "Five practical skills for ChatGPT and Codex: turn rough ideas into production-ready prompts, upgrade existing prompts for GPT-6 Astra, establish durable project foundations, stress-test plans one decision at a time, and close completed tasks safely.",
+    "longDescription": "Six practical skills for ChatGPT and Codex: turn rough ideas into production-ready prompts, upgrade existing prompts for GPT-6 Astra, establish durable project foundations, stress-test plans one decision at a time, compare products and services through current research and an adaptive interview, and close completed tasks safely.",
     "developerName": "Mate Gelei-Szego",
     "category": "Productivity",
     "capabilities": [

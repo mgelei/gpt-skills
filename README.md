@@ -8,6 +8,7 @@ Collection of useful and semi-useful Skills for ChatGPT and Codex
 | [`close-thread`](close-thread/) | Closes a ChatGPT Work or Codex task safely. It cleans up task-owned resources, preserves repository changes, summarizes the work, and archives the task when appropriate. |
 | [`prompt-architect`](prompt-architect/) | Creates, audits, and revises reliable GPT-6 Astra prompts for interactive OpenAI surfaces. It uses a stable numbered decision ledger to resolve material choices before rendering. |
 | [`prompt-upgrade`](prompt-upgrade/) | Audits an existing prompt against GPT-6 Astra guidance, explains material changes, and produces a behavior-preserving upgraded prompt. |
+| [`research-compare`](research-compare/) | Helps choose among products or services through current research, focused comparison, and an adaptive interview tailored to the user's needs. |
 
 All skills assume GPT-6 Astra.
 
@@ -15,7 +16,7 @@ All skills assume GPT-6 Astra.
 
 Publishing a GitHub Release with a strict semver tag such as `v1.0.1` runs the
 [`Package ChatGPT plugin`](.github/workflows/package-plugin.yml) workflow. The
-workflow packages all five skills with the store manifest and logo, injects
+workflow packages all six skills with the store manifest and logo, injects
 `1.0.1` as the manifest version, and attaches
 `prompt-architect-friends-1.0.1.zip` to the release.
 
