@@ -5,6 +5,8 @@ description: Help the user choose among products or services through current res
 
 Help the user choose among products or services through current research and an adaptive interview. Resolve the deciding tradeoffs with the user, then recommend one best-fit option.
 
+Follow this sequence: research the options, ask and wait, resolve consequential preferences, then recommend. Until the interview is complete, explain relevant differences without naming a winner, including a provisional or conditional winner. An explicit user request to skip or stop the interview overrides this sequence.
+
 Follow explicit user instructions over this skill's guidance, within higher-priority instructions and tool permissions. If a skill rule requires pausing or deviating from the user's request, quote that rule and explain its effect. Keep the workflow advisory: do not purchase, subscribe, sign up, or contact providers.
 
 ## Establish the comparison
@@ -37,13 +39,13 @@ If delegation is unavailable, disclose that and perform the same research sequen
 
 ## Interview adaptively
 
-After detailed option research, identify the unanswered preference most likely to change the winner. The next user-facing response must ask about it and wait for an answer; do not jump from research to a final recommendation or decision table. A category-shortlist selection does not count as the post-research interview. Ask at least one post-research question even if the user supplied detailed priorities: confirm the inferred deciding preference or tradeoff. An explicit request to skip or stop the interview overrides this gate.
+After detailed option research, identify the unanswered preference most likely to change the winner. Give brief context and ask exactly one consequential question, then wait for the user's answer. Do not replace this step with a recommendation or decision table. Ask at least one post-research question even if the user supplied detailed priorities: confirm the inferred deciding preference or tradeoff. A category-shortlist selection or a request such as "let's pick one" does not waive this interview.
 
-Ask one consequential question at a time. Prefer an available structured question tool, such as `request_user_input`, for a small set of mutually exclusive choices; use prose for open-ended answers or when the tool is unavailable. Use concrete choices and tradeoffs grounded in the researched options. Explain why a question matters when that is not obvious. Offer a provisional answer or default when useful, without treating it as the user's decision. Do not repeat settled questions.
+Ask one consequential question at a time. Prefer an available structured question tool, such as `request_user_input`, for a small set of mutually exclusive choices; use prose for open-ended answers or when the tool is unavailable. Use concrete choices and tradeoffs grounded in the researched options. Explain why a question matters when that is not obvious. After asking in prose, end the turn. If a question tool returns before the user answers, keep the question pending and yield; tool completion, elapsed time, preselected choices, and suggested defaults are not user answers. Do not answer on the user's behalf or repeat settled questions.
 
 Update the comparison after each answer. Track must-haves, disqualifiers, priorities, acceptable compromises, and remaining uncertainty. Commission targeted follow-up research when an answer exposes a material evidence gap. If every candidate fails a must-have, explain the mismatch and revisit the shortlist or constraint with the user.
 
-After each answer, ask the next consequential question or recommend if the choice is settled. Continue until a recommendation is supported with very high confidence: the preferred option satisfies known must-haves, decisive claims have adequate evidence, and plausible answers to remaining uncertainties would not change the choice. Do not invent confidence percentages or prolong the interview over immaterial details.
+After each answer, check whether plausible answers to any unresolved preference could change the winner. If so, ask the next consequential question and wait again. One answered question satisfies the initial interview gate, not the whole interview. Recommend when the preferred option satisfies known must-haves, decisive claims have adequate evidence, and plausible answers to remaining uncertainties would not change the choice. This is the basis for very high confidence; do not invent confidence percentages or prolong the interview over immaterial details.
 
 If missing evidence or unresolved tradeoffs prevent a robust recommendation, state exactly what remains unresolved and ask the next useful question. If the user cannot resolve it or asks to stop, make the best-supported pick with a clear caveat and the condition that could change it; do not claim very high confidence.
 
